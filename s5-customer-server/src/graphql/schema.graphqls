@@ -1,0 +1,80 @@
+type Customer {
+    uuid: String!
+    firstName: String!
+    surname: String!
+    email: String
+    gender: Gender
+    addresses: [Address!]
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+type Address {
+    uuid: ID!
+    street: String!
+    number: String!
+    postalCode: String!
+    city: String!
+    country: String
+}
+
+
+#type Error {
+#    message: String,
+#    messageLid: String
+#}
+#
+##todo find and Better solution
+#type UserResponse {
+#    user: User,
+#    errors: [Error]
+#}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    customer(id: ID!): Customer,
+    customers: [Customer!]
+}
+
+
+input AddressInput {
+    street: String!
+    number: String!
+    postalCode: String!
+    city: String!
+    country: String
+}
+
+input ChangeAddressInput {
+    uuid: ID!
+    street: String
+    number: String
+    postalCode: String
+    city: String
+    country: String
+}
+
+
+input CustomerInput {
+    firstName: String!, surname:String!, email: String!
+}
+input ChangeCustomerInput {
+    firstName: String, surname:String, email: String
+}
+
+type Mutation {
+    create(input: CustomerInput!): Customer
+    update(id: ID!, input: ChangeCustomerInput!): Customer,
+    delete(id: ID!): Boolean!
+    addAddress(userID: ID!, addressData: AddressInput!): Address
+    removeAddress(userID: ID! addressID: ID!): Boolean
+    changeAddress(userID: ID!, addressData: ChangeAddressInput!): Address
+}

@@ -1,0 +1,51 @@
+type Order {
+    uuid: String!
+    timestamp: String!
+    status: Status!
+    items: [OrderItem!]!
+}
+
+enum Status {
+    ORDER_PLACED
+    PROCESSING
+    SHIPPED
+    COMPLETED
+
+}
+
+type OrderItem {
+    uuid: ID!
+    quantity: Int!
+    product_uuid: String!
+}
+
+
+type Shoppingcart {
+    uuid: String!
+    items: [ShoppingcartItem!]!
+}
+
+type ShoppingcartItem {
+    uuid: ID!
+    quantity: Int!
+    product_uuid: String!
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    orders(customerID: ID!): [Order!]
+    order(id: ID!): Order,
+    shoppingcart(customerID: ID!): Shoppingcart
+}
+
+
+type Mutation {
+    putProductToCart(customerID: ID!, productID: ID!, quantity: Int!): Boolean
+    dropProductFromCart(customerID: ID!, productID: ID): Boolean
+    finishOrder: Order!
+
+}
