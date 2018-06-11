@@ -3,6 +3,7 @@ type Order {
     timestamp: String!
     status: Status!
     items: [OrderItem!]!
+    address_uuid: String
 }
 
 enum Status {

@@ -41,7 +41,8 @@ schema {
 
 type Query {
     customer(id: ID!): Customer,
-    customers: [Customer!]
+    customers: [Customer!],
+    address(id: ID!): Address
 }
 
 

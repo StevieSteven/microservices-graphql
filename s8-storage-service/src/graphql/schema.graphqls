@@ -1,0 +1,15 @@
+type Place {
+    uuid: String!
+    size: Int!
+    product_uuid: String!
+}
+
+schema {
+    query: Query
+#    mutation: Mutation
+}
+
+type Query {
+    places(productID: ID): [Place!]
+}
+

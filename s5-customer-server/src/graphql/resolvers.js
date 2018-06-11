@@ -15,7 +15,11 @@ const resolveFunctions = {
         customers(root, args) {
             return Customer.findAll();
 
-        }
+        },
+        address(_, {id}) {
+            console.log("address: id", id);
+            return Address.findByUUID(id);
+        },
     },
     Mutation: {
         create: (root, {input}) => { //todo check REQUIRED

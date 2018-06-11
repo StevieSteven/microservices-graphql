@@ -1,0 +1,26 @@
+type Category {
+    uuid: String!
+    name: String!
+    products: [Product!]
+}
+
+
+type Product {
+    uuid: ID!
+    name: String!
+    description: String
+    price: Float!
+    category: Category!
+}
+
+
+schema {
+    query: Query
+#    mutation: Mutation
+}
+
+type Query {
+    product(id: ID!): Product,
+    categories: [Category!]
+}
+

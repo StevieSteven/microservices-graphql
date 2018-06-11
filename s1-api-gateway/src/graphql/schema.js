@@ -6,10 +6,17 @@ import resolvers from './resolvers';
 
 const typeDefs = [fs.readFileSync('./src/graphql/schema.graphqls', 'utf8')];
 
-const localSchema = makeExecutableSchema({
-    typeDefs,
-    resolvers,
-});
+let localSchema = undefined;
+
+try {
+    localSchema = makeExecutableSchema({
+        typeDefs,
+        resolvers,
+    });
+
+} catch (error) {
+    console.error("error while creating local schema")
+}
 
 
 const getUrl = (instance) => {
@@ -27,8 +34,11 @@ export default class Schema {
 }
 
 async function run(props = {}) {
-    let schemas = [localSchema];
+    let schemas = [];
     let mergeResolvers = {};
+
+    if(localSchema)
+        schemas.push(localSchema);
 
     const createRemoteSchema = async (uri) => {
         const fetcher = createApolloFetch({uri});
