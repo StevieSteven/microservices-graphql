@@ -35,7 +35,7 @@ export default {
     },
     logging: {
         logServerID: "s4-logging-service",
-        level: "debug",
+        level: "error",
         consoleLogging: true
     }
 }

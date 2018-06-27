@@ -64,7 +64,7 @@ async function run(props = {}) {
         schemas.push(orderSchema);
         schemas.push(schemaExtension);
 
-        mergeResolvers = Object.assign(mergeResolvers, resolvers);
+        mergeResolvers = Object.assign(mergeResolvers, resolvers(orderSchema));
     }
 
     return mergeSchemas({ //produces an console warn: The addResolveFunctionsToSchema function takes named options now; see IAddResolveFunctionsToSchemaOptions

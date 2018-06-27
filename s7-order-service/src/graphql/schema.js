@@ -1,5 +1,11 @@
 import fs from 'fs';
-import {makeExecutableSchema, makeRemoteExecutableSchema, mergeSchemas, introspectSchema} from 'graphql-tools';
+import {
+    makeExecutableSchema,
+    makeRemoteExecutableSchema,
+    mergeSchemas,
+    introspectSchema,
+    FilterRootFields
+} from 'graphql-tools';
 import {createApolloFetch} from 'apollo-fetch';
 
 import resolvers from './resolvers';
@@ -13,7 +19,7 @@ const localSchema = makeExecutableSchema({
 
 
 const getUrl = (instance) => {
-    if(!instance)
+    if (!instance)
         return;
 
     return `http://${instance.ipAddr}:${instance.port["$"]}/graphql`
@@ -40,16 +46,22 @@ async function run(props = {}) {
 
     for (let key of Object.keys(props)) {
 
-        let {instance, schemaExtension, resolvers} = props[key];
+        let {instance, schemaExtension, resolvers, filter} = props[key];
 
         let url = getUrl(instance);
         if (!url) {
             console.error(`no url for ${key} found`);
             continue;
         }
+
+
         let orderSchema = undefined;
         try {
             orderSchema = await createRemoteSchema(url);
+
+            // console.log("filter: ", filter);
+            if (filter && filter.transformSchema)
+                orderSchema = filter.transformSchema(orderSchema);
 
         } catch (e) {
             console.error(`${key}: no schema on ${url} available`);
@@ -64,12 +76,27 @@ async function run(props = {}) {
         schemas.push(orderSchema);
         schemas.push(schemaExtension);
 
-        mergeResolvers = Object.assign(mergeResolvers, resolvers);
+        mergeResolvers = Object.assign(mergeResolvers, resolvers(orderSchema));
     }
 
-    return mergeSchemas({ //produces an console warn: The addResolveFunctionsToSchema function takes named options now; see IAddResolveFunctionsToSchemaOptions
+
+    let globalFilter = new FilterRootFields((operation, fieldName, field) => {
+        console.log("operation: ", operation);
+        // console.log("field: ", field);
+        // if (operation === "Mutation") return false;
+
+
+        // console.log("wichtiges fieldName: ", fieldName);
+
+        return fieldName !== "address";
+
+        // return true;
+
+    });
+
+    return globalFilter.transformSchema(mergeSchemas({ //produces an console warn: The addResolveFunctionsToSchema function takes named options now; see IAddResolveFunctionsToSchemaOptions
         schemas: schemas,
         resolvers: mergeResolvers
-    });
+    }));
 }
 

@@ -103,7 +103,7 @@ export default (createGraphQLConfiguration) => {
 
     app.use((req, res, next) => {
         // console.log("method: ", req.method);
-        // console.log("body: ", req.body);
+        console.log("body: ", req.body.query);
         logger.debug({
             method: req.method,
             url: req.originalUrl,

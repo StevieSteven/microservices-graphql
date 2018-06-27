@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS `logs` (
     `timestamp` VARCHAR(40),
     service_id VARCHAR(40),
     `level` ENUM('debug', 'info', 'warn', 'error'),
-    message text
+    message LONGTEXT
 );
