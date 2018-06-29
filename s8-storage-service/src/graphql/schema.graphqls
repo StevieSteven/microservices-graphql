@@ -1,6 +1,6 @@
 type Place {
-    uuid: String!
-    size: Int!
+    uuid: ID!
+    quantity: Int!
     product_uuid: String!
 }
 

@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS places;
 CREATE TABLE IF NOT EXISTS places (
 	id			INTEGER PRIMARY KEY auto_increment,
     uuid 		VARCHAR(36),
-    `size` 	INTEGER ,
+    `quantity` 	INTEGER ,
     product_uuid VARCHAR(36)
 );
 

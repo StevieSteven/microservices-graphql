@@ -39,6 +39,7 @@ export default (createGraphQLConfiguration) => {
 
 // client.logger.level('debug');
     client.start(() => {
+
         if (createGraphQLConfiguration)
             graphQLConfiguration = createGraphQLConfiguration(client);
 
@@ -96,13 +97,9 @@ export default (createGraphQLConfiguration) => {
 
     app.get('/graphiql', graphiqlExpress({endpointURL: '/graphql'})); // if you want GraphiQL enabled
 
-// app.get('/', (req, res) => {
-//     res.send("Response of Test;")
-// });
-
     app.use((req, res, next) => {
         // console.log("method: ", req.method);
-        // console.log("body: ", req.body);
+        console.log("body: ", req.body.query);
         logger.debug({
             method: req.method,
             url: req.originalUrl,
@@ -113,50 +110,6 @@ export default (createGraphQLConfiguration) => {
         next()
     });
 
-    //
-    // const createGraphQLConfiguration = (client) => {
-    //     return {
-    //         orders: {
-    //             instance: client.getInstancesByAppId("s7-order-service")[0],
-    //             schemaExtension: `
-    //             extend type Customer {
-    //                 orders: [Order!]
-    //                 shoppingcart: Shoppingcart
-    //             }  `,
-    //             resolvers: {
-    //                 Customer: {
-    //                     orders: {
-    //                         fragment: `fragment OrderFragment on Customer {customer_uuid}`,
-    //                         resolve(parent, args, context, info) {
-    //                             const customerId = parent.uuid;
-    //                             console.log('customerId: ', customerId);
-    //                             return mergeInfo.delegate(
-    //                                 'query',
-    //                                 'orders',
-    //                                 {customerID: customerId},
-    //                                 context,
-    //                                 info
-    //                             );
-    //                         }
-    //                     },
-    //                     shoppingcart: {
-    //                         fragment: `fragment CartFragment on Customer {customer_uuid}`,
-    //                         resolve(parent, args, context, info) {
-    //                             const customerId = parent.uuid;
-    //                             return mergeInfo.delegate(
-    //                                 'query',
-    //                                 'shoppingcart',
-    //                                 {customerID: customerId},
-    //                                 context,
-    //                                 info
-    //                             );
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     };
-    // };
 
     return app;
 }

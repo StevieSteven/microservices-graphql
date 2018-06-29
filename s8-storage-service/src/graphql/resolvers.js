@@ -1,9 +1,7 @@
 import uuid from 'uuid/v4';
 import Place from './../models/Place';
 
-/*
-* todo  mutations are missing
- */
+
 const resolveFunctions = {
     Query: {
         places(_, {productID}) {

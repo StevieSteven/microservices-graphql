@@ -55,28 +55,28 @@ async function run(props = {}) {
         }
 
 
-        let orderSchema = undefined;
+        let newSchema = undefined;
         try {
-            orderSchema = await createRemoteSchema(url);
+            newSchema = await createRemoteSchema(url);
 
             // console.log("filter: ", filter);
             if (filter && filter.transformSchema)
-                orderSchema = filter.transformSchema(orderSchema);
+                newSchema = filter.transformSchema(newSchema);
 
         } catch (e) {
             console.error(`${key}: no schema on ${url} available`);
             continue;
 
         }
-        if (!orderSchema) {
+        if (!newSchema) {
             console.error("no schema on " + url + " available");
             continue;
         }
 
-        schemas.push(orderSchema);
+        schemas.push(newSchema);
         schemas.push(schemaExtension);
 
-        mergeResolvers = Object.assign(mergeResolvers, resolvers(orderSchema));
+        mergeResolvers = Object.assign(mergeResolvers, resolvers(newSchema));
     }
 
 
