@@ -1,0 +1,26 @@
+type Rating {
+    uuid: String!
+    timestamp: String!
+    product_uuid: String!
+    customer_uuid: String!
+    stars: Int!
+    comment: String
+
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    ratingsOfCustomer(customerID: ID!): [Rating!]
+    rating(id: ID!): Rating,
+    ratingsOfProduct(productID: ID!): [Rating!]
+}
+
+
+type Mutation {
+    addRating(customerID: ID!, productID: ID!, stars: Int!, comment: String): Rating
+
+}

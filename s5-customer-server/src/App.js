@@ -49,6 +49,36 @@ const createGraphQLConfiguration = (client) => {
                     }
                 }
             }
+        },
+        ratings: {
+            instance: client.getInstancesByAppId("s11-rating-service")[0],
+            schemaExtension: `
+                extend type Customer {
+                    ratings: [Rating!]
+                }  `,
+            resolvers: (schema) => {
+                return {
+                    Customer: {
+                        ratings: {
+                            fragment: `fragment RatingFragment on Customer {uuid}`,
+                            resolve(parent, args, context, info) {
+                                const customerId = parent.uuid;
+                                console.log('customerId: ', customerId);
+                                return info.mergeInfo.delegateToSchema({
+                                    schema,
+                                    operation: 'query',
+                                    fieldName: 'ratingsOfCustomer',
+                                    args: {
+                                        customerID: customerId
+                                    },
+                                    context,
+                                    info
+                                });
+                            }
+                        }
+                    }
+                }
+            }
         }
         // };
     };
