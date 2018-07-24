@@ -1,6 +1,6 @@
 import request from 'request';
 
-import appConfig from './../../appConfig';
+import appConfig from './../../config';
 
 
 const LEVELS = ["debug", "info", "warn", "error"];

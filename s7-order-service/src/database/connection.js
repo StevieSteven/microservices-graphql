@@ -1,6 +1,6 @@
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
-import config from '../../appConfig';
+import config from '../../config';
 
 let shortConfig = config.database;
 

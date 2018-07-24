@@ -1,0 +1,31 @@
+{
+  "graphqlPath": "/graphql",
+  "graphiqlPath": "/graphiql",
+  "graphiqlEnabled": true,
+  "instance": {
+    "app": "s6-product-service",
+    "hostName": "localhost",
+    "ipAddr": "127.0.0.1",
+    "port": 8086,
+    "protocol": "http",
+    "heartbeatInterval": 5000
+  },
+  "registry": {
+    "host": "127.0.0.1",
+    "protocol": "http",
+    "port": 8761,
+    "servicePath": "/graphql"
+  },
+  "database": {
+    "host": "localhost",
+    "schema": "ms-s6-products",
+    "username": "ms",
+    "password": "ms-development",
+    "queryLogging": true
+  },
+  "logging": {
+    "logServerID": "s4-logging-service",
+    "level": "debug",
+    "consoleLogging": true
+  }
+}

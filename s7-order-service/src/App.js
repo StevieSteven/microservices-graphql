@@ -1,70 +1,63 @@
+import GraphQLService from '../source/graphql-service/GraphQLService';
+// import GraphQLService from 'stremo-graphql-service';
 
-import {FilterRootFields} from 'graphql-tools';
+import config from './../config.json';
 
+import localSchema from './graphql/schema';
 
-import GraphQLApp from './GraphQLApp';
-
-const createGraphQLConfiguration = (client) => {
-        return {
-            address: {
-                instance: client.getInstancesByAppId("s5-customer-service")[0],
-                schemaExtension: `
-                extend type Order {
-                    address: Address
-                }
-                                `,
-                resolvers: (schema) => {
-                    return {
-                        Order: {
-                            address: {
-                                fragment: `fragment OrderAddressFragment on Order {address_uuid}`,
-                                resolve(parent, args, context, info) {
-                                    // const customerId = parent.uuid;
-                                    // console.log('customerId: ', customerId);
-                                    console.log("address id: ", parent.address_uuid);
-
-                                    return info.mergeInfo.delegateToSchema({
-                                        schema: schema,
-                                        operation: 'query',
-                                        fieldName: 'address',
-                                        args: {
-                                            id: parent.address_uuid
-                                        }
-                                        ,
-                                        context,
-                                        info
-                                    });
-                                }
-                            }
-                        }
-                    }
-                },
-                filter: new FilterRootFields((operation, fieldName, field) => {
-                    console.log("operation: ", operation);
-                    // console.log("field: ", field);
-                    if (operation === "Mutation") return false;
+export default () => {
 
 
-                    console.log("wichtiges fieldName: ", fieldName);
+    config.localSchema = localSchema;
+    config.dependencies = [
+        // {
+        //     serviceId: "s5-customer-service",
+        //     attribute: "Order.address",
+        //     rootFieldName: "query.address",
+        //     schemaExtension: `
+        //          extend type Order {
+        //              address: Address
+        //          }
+        //          `,
+        //     resolvers: (schema) => {
+        //         return {
+        //             Order: {
+        //                 address: {
+        //                     fragment: `fragment OrderAddressFragment on Order {address_uuid}`,
+        //                     resolve(parent, args, context, info) {
+        //                         // const customerId = parent.uuid;
+        //                         // console.log('customerId: ', customerId);
+        //                         console.log("address id: ", parent.address_uuid);
+        //
+        //                         return info.mergeInfo.delegateToSchema({
+        //                             schema: schema,
+        //                             operation: 'query',
+        //                             fieldName: 'address',
+        //                             args: {
+        //                                 id: parent.address_uuid
+        //                             }
+        //                             ,
+        //                             context,
+        //                             info
+        //                         });
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
 
-                    return fieldName === "address";
-
-                    // return true;
-
-                })
-            },
-            products: {
-                instance: client.getInstancesByAppId("s6-product-service")[0],
-                schemaExtension: `
+        {
+            serviceId: "s6-product-service",
+            attribute: "OrderItem.product",
+            rootFieldName: "query.product",
+            schemaExtension: `
                 extend type OrderItem {
-                    product: Product
-                }  
-                
-                extend type ShoppingcartItem {
                     product: Product
                 }
                 `,
-                resolvers: (schema) => {
+            resolvers:
+                (schema) => {
                     return {
                         OrderItem: {
                             product: {
@@ -82,7 +75,23 @@ const createGraphQLConfiguration = (client) => {
                                     });
                                 }
                             }
-                        },
+                        }
+                    }
+                }
+        }, {
+            serviceId: "s6-product-service",
+            attribute: "ShoppingcartItem.product",
+            rootFieldName:
+                "query.product",
+            schemaExtension:
+                `
+                extend type ShoppingcartItem {
+                    product: Product
+                }
+                `,
+            resolvers:
+                (schema) => {
+                    return {
                         ShoppingcartItem: {
                             product: {
                                 fragment: `fragment ProductFragment on ShoppingcartItem {product_uuid}`,
@@ -104,10 +113,15 @@ const createGraphQLConfiguration = (client) => {
                         }
                     }
                 }
-            }
-        };
-    }
-;
-//
-//
-export default GraphQLApp(createGraphQLConfiguration);
+        }
+    ];
+
+
+    let graphqlService = new GraphQLService(config);
+
+
+    graphqlService.start((app) => {
+        app.listen(config.instance.port)
+    });
+
+}
