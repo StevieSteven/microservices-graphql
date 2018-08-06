@@ -27,7 +27,7 @@ async function generateHoleSchema (localSchema, registryConnection, dependencies
 
 
     console.log("generateHoleSchema");
-    console.log("dependencies: ", dependencies);
+    // console.log("dependencies: ", dependencies);
 
     return new Promise((resolve, reject) => {
         //TODO
@@ -68,6 +68,8 @@ async function run(localSchema, registryConnection, dependencies) {
     let schemas = [localSchema];
     let mergeResolvers = {};
 
+    let blackListOfPublicFilter = [];
+
     for (let item of dependencies) {
 
 
@@ -84,54 +86,96 @@ async function run(localSchema, registryConnection, dependencies) {
         console.log(url);
 
 
-        let newSchema = undefined;
+        let remoteSchema = undefined;
         try {
-            newSchema = await createRemoteSchema(url);
+            remoteSchema = await createRemoteSchema(url);
 
-            // console.log("filter: ", filter);
             if (filter && filter.transformSchema)
-                newSchema = filter.transformSchema(newSchema);
+                remoteSchema = filter.transformSchema(remoteSchema);
 
         } catch (e) {
             console.error(`${key}: no schema on ${url} available`);
             continue;
 
         }
-        if (!newSchema) {
-            console.error("no schema on " + url + " available");
+        if (!remoteSchema) {
+            console.error(`no schema on ${url} available`);
             continue;
         }
 
-        schemas.push(newSchema);
+        /**
+         * main job of the filter is delete all remote filter
+         * @type {FilterRootFields}
+         */
+        let singleSchemaFilter = new FilterRootFields((operation, fieldName, field) => {
+
+            for(let dependency of dependencies) {
+                let rootFieldName = dependency.rootFieldName;
+
+                let rootFieldList = rootFieldName.split(".");
+                let operationNamePart = rootFieldList[0];
+                let fieldNamePart = rootFieldList[1];
+
+                if(operation.toLowerCase() === operationNamePart.toLowerCase() && fieldName === fieldNamePart) {
+                    blackListOfPublicFilter.push(rootFieldName);
+                    return true;
+                }
+            }
+            return false;
+        });
+
+
+        remoteSchema = singleSchemaFilter.transformSchema(remoteSchema);
+
+        schemas.push(remoteSchema);
         schemas.push(schemaExtension);
 
-        mergeResolvers = Object.assign(mergeResolvers, resolvers(newSchema));
+        mergeResolvers = Object.assign(mergeResolvers, resolvers(remoteSchema));
     }
 
 
-    let globalFilter = new FilterRootFields((operation, fieldName, field) => {
-        console.log("operation: ", operation);
-        // console.log("field: ", field);
-        // if (operation === "Mutation") return false;
+    /**
+     * main job of the filter is delete all remote filter
+     * @type {FilterRootFields}
+     */
+    let publicSchemaFilter = new FilterRootFields((operation, fieldName, field) => {
+        for(let item of blackListOfPublicFilter) {
+            let rootFieldList = item.split(".");
+            let operationNamePart = rootFieldList[0];
+            let fieldNamePart = rootFieldList[1];
 
+            if(operation.toLowerCase() === operationNamePart.toLowerCase() && fieldName === fieldNamePart) {
+                return false;
+            }
+        }
 
-        // console.log("wichtiges fieldName: ", fieldName);
-
-        return fieldName !== "address";
-
-        // return true;
+        return true;
 
     });
 
-    let holeSchema = localSchema;
+    let privateSchema = localSchema;
 
     try {
-        holeSchema =globalFilter.transformSchema(mergeSchemas({ //produces an console warn: The addResolveFunctionsToSchema function takes named options now; see IAddResolveFunctionsToSchemaOptions
+        privateSchema =mergeSchemas({ //produces an console warn: The addResolveFunctionsToSchema function takes named options now; see IAddResolveFunctionsToSchemaOptions
             schemas: schemas,
             resolvers: mergeResolvers
-        }));
+        });
     } catch (e) {
     }
-    return holeSchema;
+
+
+    let publicSchema = privateSchema;
+
+    try {
+        publicSchema = publicSchemaFilter.transformSchema(privateSchema);
+    } catch(e) {
+        console.log.error("error while forming publicSchema")
+    }
+
+
+    return publicSchema;
+
+
+
 }
 

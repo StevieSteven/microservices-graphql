@@ -41,8 +41,17 @@ type Query {
     orders(customerID: ID!): [Order!]
     order(id: ID!): Order,
     shoppingcart(customerID: ID!): Shoppingcart
+
+    newSchema: Boolean
 }
 
+
+
+input InputTypeDummy {
+    needed: String!
+    nullValue: String
+    listValue: [String!]!
+}
 
 type Mutation {
     putProductToCart(customerID: ID!, productID: ID!, quantity: Int!): Boolean

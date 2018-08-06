@@ -64,6 +64,7 @@ const getUrl = (instance) => {
 };
 
 
+//TODO: remove old attributes with same name!
 async function run(localSchema, registryConnection, dependencies) {
     let schemas = [localSchema];
     let mergeResolvers = {};
@@ -161,6 +162,8 @@ async function run(localSchema, registryConnection, dependencies) {
             resolvers: mergeResolvers
         });
     } catch (e) {
+        console.error("error while merging schemas: ", e);
+        console.log("only local schema will be used")
     }
 
 

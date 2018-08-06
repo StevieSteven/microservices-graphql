@@ -12,6 +12,6 @@ const localSchema = makeExecutableSchema({
     resolvers,
 });
 
-export default localSchema
+export default localSchema;
 
 

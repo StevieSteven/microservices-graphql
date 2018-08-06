@@ -10,42 +10,42 @@ export default () => {
 
     config.localSchema = localSchema;
     config.dependencies = [
-        // {
-        //     serviceId: "s5-customer-service",
-        //     attribute: "Order.address",
-        //     rootFieldName: "query.address",
-        //     schemaExtension: `
-        //          extend type Order {
-        //              address: Address
-        //          }
-        //          `,
-        //     resolvers: (schema) => {
-        //         return {
-        //             Order: {
-        //                 address: {
-        //                     fragment: `fragment OrderAddressFragment on Order {address_uuid}`,
-        //                     resolve(parent, args, context, info) {
-        //                         // const customerId = parent.uuid;
-        //                         // console.log('customerId: ', customerId);
-        //                         console.log("address id: ", parent.address_uuid);
-        //
-        //                         return info.mergeInfo.delegateToSchema({
-        //                             schema: schema,
-        //                             operation: 'query',
-        //                             fieldName: 'address',
-        //                             args: {
-        //                                 id: parent.address_uuid
-        //                             }
-        //                             ,
-        //                             context,
-        //                             info
-        //                         });
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // },
+        {
+            serviceId: "s5-customer-service",
+            attribute: "Order.address",
+            rootFieldName: "query.address",
+            schemaExtension: `
+                 extend type Order {
+                     address: Address
+                 }
+                 `,
+            resolvers: (schema) => {
+                return {
+                    Order: {
+                        address: {
+                            fragment: `fragment OrderAddressFragment on Order {address_uuid}`,
+                            resolve(parent, args, context, info) {
+                                // const customerId = parent.uuid;
+                                // console.log('customerId: ', customerId);
+                                console.log("address id: ", parent.address_uuid);
+
+                                return info.mergeInfo.delegateToSchema({
+                                    schema: schema,
+                                    operation: 'query',
+                                    fieldName: 'address',
+                                    args: {
+                                        id: parent.address_uuid
+                                    }
+                                    ,
+                                    context,
+                                    info
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        },
 
         {
             serviceId: "s6-product-service",

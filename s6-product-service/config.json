@@ -2,6 +2,7 @@
   "graphqlPath": "/graphql",
   "graphiqlPath": "/graphiql",
   "graphiqlEnabled": true,
+  "version": "1.00",
   "instance": {
     "app": "s6-product-service",
     "hostName": "localhost",

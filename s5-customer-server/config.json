@@ -1,0 +1,32 @@
+{
+  "graphqlPath": "/graphql",
+  "graphiqlPath": "/graphiql",
+  "graphiqlEnabled": true,
+  "version": "1.00",
+  "instance": {
+    "app": "s5-customer-service",
+    "hostName": "localhost",
+    "ipAddr": "127.0.0.1",
+    "port": 8085,
+    "protocol": "http",
+    "heartbeatInterval": 5000
+  },
+  "registry": {
+    "host": "127.0.0.1",
+    "protocol": "http",
+    "port": 8761,
+    "servicePath": "/graphql"
+  },
+  "database": {
+    "host": "localhost",
+    "schema": "ms-s5-customer",
+    "username": "ms",
+    "password": "ms-development",
+    "queryLogging": true
+  },
+  "logging": {
+    "logServerID": "s4-logging-service",
+    "level": "debug",
+    "consoleLogging": true
+  }
+}

@@ -45,8 +45,8 @@ export default class RegistryConnection {
 
         const operation = {
             query: gql`
-                mutation reqister($id: String!, $networkAddress: String!, $graphQLPath: String, $status: Status, $dependencies: [DependencyInput!]) {
-                    register(input: {id: $id, networkAddress: $networkAddress, graphQLPath: $graphQLPath, status: $status, dependencies: $dependencies} )
+                mutation reqister($id: String!, $networkAddress: String!, $graphQLPath: String, $status: Status, $dependencies: [DependencyInput!], $version: String) {
+                    register(input: {id: $id, networkAddress: $networkAddress, graphQLPath: $graphQLPath, status: $status, dependencies: $dependencies, version:$version} )
                 }
             `,
 

@@ -1,14 +1,21 @@
-import GraphQLApp from './GraphQLApp';
+import GraphQLService from '../source/graphql-service/GraphQLService';
+// import GraphQLService from 'stremo-graphql-service';
 
-const createGraphQLConfiguration = (client) => {
-    // return (mergeInfo) => {
-    return {
-        orders: {
-            instance: client.getInstancesByAppId("s7-order-service")[0],
+import config from './../config.json';
+
+import localSchema from './graphql/schema';
+
+export default () => {
+
+    config.localSchema = localSchema;
+    config.dependencies = [
+        {
+            serviceId: "s7-order-service",
+            attribute: "Customer.orders",
+            rootFieldName: "query.orders",
             schemaExtension: `
                 extend type Customer {
                     orders: [Order!]
-                    shoppingcart: Shoppingcart
                 }  `,
             resolvers: (schema) => {
                 return {
@@ -29,7 +36,22 @@ const createGraphQLConfiguration = (client) => {
                                     info
                                 });
                             }
-                        },
+                        }
+                    }
+                }
+            }
+        },
+        {
+            serviceId: "s7-order-service",
+            attribute: "Customer.shoppingcart",
+            rootFieldName: "query.shoppingcart",
+            schemaExtension: `
+                extend type Customer {
+                    shoppingcart: Shoppingcart
+                }  `,
+            resolvers: (schema) => {
+                return {
+                    Customer: {
                         shoppingcart: {
                             fragment: `fragment CartFragment on Customer {customer_uuid}`,
                             resolve(parent, args, context, info) {
@@ -50,9 +72,46 @@ const createGraphQLConfiguration = (client) => {
                 }
             }
         }
-        // };
-    };
+
+
+        // {
+        //     serviceId: "s8-storage-service",
+        //     attribute: "Product.places",
+        //     rootFieldName: "query.places",
+        //     schemaExtension: `
+        //         extend type Product {
+        //             places: [Place!]
+        //         }  `,
+        //     resolvers: (schema) => {
+        //         return {
+        //             Product: {
+        //                 places: {
+        //                     fragment: `fragment ProductFragment on Product {product_uuid}`,
+        //                     resolve(parent, args, context, info) {
+        //                         return info.mergeInfo.delegateToSchema({
+        //                             schema,
+        //                             operation: 'query',
+        //                             fieldName: 'places',
+        //                             args: {
+        //                                 productID: parent.uuid
+        //                             },
+        //                             context,
+        //                             info
+        //                         });
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        // }
+    ];
+
+    let graphqlService = new GraphQLService(config);
+
+
+    graphqlService.start((app) => {
+        app.listen(config.instance.port)
+    });
 };
-//
-//
-export default GraphQLApp(createGraphQLConfiguration);
+

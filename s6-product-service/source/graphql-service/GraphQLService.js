@@ -61,7 +61,8 @@ export default class GraphQLService {
                 networkAddress: `${protocol}://${ipAddr}:${port}`,
                 graphQLPath: graphqlPath,
                 status,
-                dependencies: this.settings.dependencies
+                dependencies: this.settings.dependencies,
+                version: this.settings.version
             }
         ).then(data => {
             console.log("registration successfully");

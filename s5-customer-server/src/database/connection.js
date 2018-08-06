@@ -1,6 +1,6 @@
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
-import config from '../../appConfig';
+import config from '../../config';
 
 let shortConfig = config.database;
 
@@ -13,7 +13,7 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
     if (err) throw err;
-    console.log("Database connected!");
+console.log("Database connected!");
 });
 module.exports = connection;
 
