@@ -42,7 +42,7 @@ type Query {
     order(id: ID!): Order,
     shoppingcart(customerID: ID!): Shoppingcart
 
-    newSchema: Boolean
+    schemaVersion2: Boolean
 }
 
 

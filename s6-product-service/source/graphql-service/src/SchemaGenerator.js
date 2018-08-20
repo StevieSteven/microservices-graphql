@@ -73,7 +73,7 @@ async function run(localSchema, registryConnection, dependencies) {
     for (let item of dependencies) {
 
 
-        let key = item.instance;
+        let key = item.serviceId;
 
         let {schemaExtension, resolvers, filter} = item;
 

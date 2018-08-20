@@ -2,7 +2,7 @@
   "graphqlPath": "/graphql",
   "graphiqlPath": "/graphiql",
   "graphiqlEnabled": true,
-  "version": "1.00",
+  "version": "1.10",
   "instance": {
     "app": "s7-order-service",
     "hostName": "localhost",

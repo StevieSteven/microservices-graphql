@@ -9,37 +9,37 @@ export default () => {
 
     config.localSchema = localSchema;
     config.dependencies = [
-        // {
-        //     serviceId: "s8-storage-service",
-        //     attribute: "Product.places",
-        //     rootFieldName: "query.places",
-        //     schemaExtension: `
-        //         extend type Product {
-        //             places: [Place!]
-        //         }  `,
-        //     resolvers: (schema) => {
-        //         return {
-        //             Product: {
-        //                 places: {
-        //                     fragment: `fragment ProductFragment on Product {product_uuid}`,
-        //                     resolve(parent, args, context, info) {
-        //                         return info.mergeInfo.delegateToSchema({
-        //                             schema,
-        //                             operation: 'query',
-        //                             fieldName: 'places',
-        //                             args: {
-        //                                 productID: parent.uuid
-        //                             },
-        //                             context,
-        //                             info
-        //                         });
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //
-        // }
+        {
+            serviceId: "s8-storage-service",
+            attribute: "Product.places",
+            rootFieldName: "query.places",
+            schemaExtension: `
+                extend type Product {
+                    places: [Place!]
+                }  `,
+            resolvers: (schema) => {
+                return {
+                    Product: {
+                        places: {
+                            fragment: `fragment ProductFragment on Product {product_uuid}`,
+                            resolve(parent, args, context, info) {
+                                return info.mergeInfo.delegateToSchema({
+                                    schema,
+                                    operation: 'query',
+                                    fieldName: 'places',
+                                    args: {
+                                        productID: parent.uuid
+                                    },
+                                    context,
+                                    info
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     ];
 
     let graphqlService = new GraphQLService(config);
